@@ -1,0 +1,35 @@
+﻿@using HoneyPotTrapper.Models;
+@using HoneyPotTrapper.ViewModels;
+@model ListeningPortsViewModel;
+@{
+    ViewBag.Title = "Прослуховування портів";
+}
+
+<h2>Прослуховування портів</h2>
+
+@if (Model.InProgress)
+{
+    <div class="alert alert-success">Listenng in progress...</div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+@{
+    List<int> v = Model.PortsForListening;
+    bool inProgress = Model.InProgress;
+    string msg = (inProgress) ? "STOP" : "Start Listening";
+    string cls = (inProgress) ? "btn-danger" : "btn-primary";
+}
+
+<form method="post" asp-controller="ListeningPorts" asp-action="StartListening">
+    @for (int i = 1; i <= 5; i++)
+    {
+        <div class="form-group">
+            <label for="port@(i)">Port @(i):</label>
+            <input type="text" class="form-control" readonly=@inProgress name="ports[@(i - 1)]" id="port@(i)"  value = @v[i-1] >
+        </div>
+    }
+    <button type="submit" class="btn @cls">@msg</button>
+</form>
