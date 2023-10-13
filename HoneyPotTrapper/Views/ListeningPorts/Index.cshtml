@@ -1,5 +1,5 @@
 ﻿@using HoneyPotTrapper.Models;
-@using HoneyPotTrapper.ViewModels;
+@using HoneyPotTrapper.Models.ViewModels;
 @model ListeningPortsViewModel;
 @{
     ViewBag.Title = "Прослуховування портів";
@@ -9,7 +9,7 @@
 
 @if (Model.InProgress)
 {
-    <div class="alert alert-success">Listenng in progress...</div>
+    <div class="alert alert-success">Процес прослуховування портів запущено...</div>
 }
 
 @if (TempData["ErrorMessage"] != null)
@@ -17,19 +17,34 @@
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
 @{
-    List<int> v = Model.PortsForListening;
-    bool inProgress = Model.InProgress;
-    string msg = (inProgress) ? "STOP" : "Start Listening";
-    string cls = (inProgress) ? "btn-danger" : "btn-primary";
-}
+    List<int> portsForListening = Model.PortsForListening;
+    int columnCount = portsForListening.Count;
 
+}
+    <p>Оберіть порти, які ви бажаєте моніторити на сканування</p>
+    <p>Увага! Система використовує в своїх потребах і не дозволить використати наступні порти:</p>
+    <textarea class="textareabusyportlist">@ViewBag.busyPortsString</textarea>
 <form method="post" asp-controller="ListeningPorts" asp-action="StartListening">
-    @for (int i = 1; i <= 5; i++)
-    {
-        <div class="form-group">
-            <label for="port@(i)">Port @(i):</label>
-            <input type="text" class="form-control" readonly=@inProgress name="ports[@(i - 1)]" id="port@(i)"  value = @v[i-1] >
-        </div>
-    }
-    <button type="submit" class="btn @cls">@msg</button>
+    <table width="100%">
+        <tr>
+            @for (int i = 1; i <= columnCount; i++)
+            {
+                <td>Port @(i):</td>
+            }
+        </tr>
+        <tr>
+            @for (int i = 1; i <= columnCount; i++)
+            {
+                <td>
+                    <input type="number" class="form-control" readonly=@Model.InProgress name="ports[@(i - 1)]" id="port@(i)" value=@portsForListening[i-1] required>
+                </td>
+            }
+        </tr>
+    </table>
+    <button type="submit" class="btn @ViewBag.ButtonStyle">@ViewBag.ButtonText</button>
+</form> 
+<form method="post" asp-controller="ListeningPorts" asp-action="BlockMaliciousIP">
+    <button type="submit" class="btn btn-danger">Block IP</button>
 </form>
+@inject IMessageViewModel messageViewModel;
+@await Html.PartialAsync("Part", messageViewModel)

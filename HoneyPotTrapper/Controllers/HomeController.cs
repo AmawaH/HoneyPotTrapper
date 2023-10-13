@@ -3,21 +3,20 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using HoneyPotTrapper.Validations;
 using Microsoft.Extensions.Logging;
-using HoneyPotTrapper.ViewModels;
-
+using HoneyPotTrapper.Models.ViewModels;
 namespace HoneyPotTrapper.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> logger;
         private readonly IValidators validators;
-        private IPortsForListeningCollection portsForListeningCollection;
+        private IAppModel appModel;
 
-        public HomeController(ILogger<HomeController> _logger, IValidators _validators, IPortsForListeningCollection _portsForListeningCollection)
+        public HomeController(ILogger<HomeController> _logger, IValidators _validators, IAppModel _appModel)
         {
             logger = _logger;
             validators = _validators;
-            portsForListeningCollection = _portsForListeningCollection;
+            appModel = _appModel;
         }
 
         public IActionResult Index()

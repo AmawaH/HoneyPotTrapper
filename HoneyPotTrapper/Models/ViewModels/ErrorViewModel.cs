@@ -1,4 +1,4 @@
-namespace HoneyPotTrapper.ViewModels
+namespace HoneyPotTrapper.Models.ViewModels
 {
     public class ErrorViewModel
     {

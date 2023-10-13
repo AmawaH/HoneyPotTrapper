@@ -1,4 +1,6 @@
+using HoneyPotTrapper.Infrastructure;
 using HoneyPotTrapper.Models;
+using HoneyPotTrapper.Models.ViewModels;
 using HoneyPotTrapper.Validations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +9,9 @@ using Microsoft.Extensions.Hosting;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<IPortsForListeningCollection, PortsForListeningCollection>();
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IAppModel, AppModel>();
+builder.Services.AddSingleton<IMessageViewModel,  MessageViewModel>();
 builder.Services.AddSingleton<IValidators, Validators>();
 builder.Services.AddSingleton<ISystemBusyPortsDetector, SystemBusyPortsDetector>();
 builder.Services.AddControllersWithViews();
@@ -29,8 +33,10 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.MapHub<MessageHub>("/messagehub");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();
